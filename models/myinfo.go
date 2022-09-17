@@ -6,18 +6,19 @@ type Profile struct {
 	Description  string   `json:"description" bson:"description"`
 	Email        string   `json:"email" bson:"email"`
 	Technologies []string `json:"technologies" bson:"technologies"`
+	Resume       string   `json:"resume" bson:"resume"`
 }
 
 type Project struct {
-	Name         string `json:"name" bson:"namedescription"`
-	Description  string `json:"description" bson:"description"`
-	Repository   string `json:"repository" bson:"repository"`
-	Technologies string `json:"technologies" bson:"technologies"`
-	Website      string `json:"website" bson:"website"`
+	Name         string   `json:"name" bson:"name"`
+	Description  string   `json:"description" bson:"description"`
+	Repository   string   `json:"repository" bson:"repository"`
+	Technologies []string `json:"technologies" bson:"technologies"`
+	Website      string   `json:"website" bson:"website"`
 }
 
-type Resume struct {
-	Content string `json:"content" bson:"content"`
+type Projects struct {
+	List []Project `json:"projects" bson:"projects"`
 }
 
 type Dates struct {
@@ -31,4 +32,8 @@ type Job struct {
 	Location    string `json:"location" bson:"location"`
 	Description string `json:"description" bson:"description"`
 	Dates       Dates  `json:"dates" bson:"dates"`
+}
+
+type Jobs struct {
+	List []Job `json:"jobs" bson:"jobs"`
 }

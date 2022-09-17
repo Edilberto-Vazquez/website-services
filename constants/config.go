@@ -6,11 +6,6 @@ import (
 	"github.com/gin-contrib/cors"
 )
 
-const (
-	DB_NAME       = "my-database"
-	DB_COLLECTION = "my-info"
-)
-
 var (
 	CorsConfig = cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000", "https://edilberto-vazquez.github.io/"},
@@ -19,5 +14,12 @@ var (
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}
+	DB_NAME            = ""
+	DB_COLLECTION      = ""
 	ACCEPTED_LANGUAGES = map[string]string{"en-us": "en", "es-mx": "es"}
 )
+
+func SetDB(dbName, dbCollection string) {
+	DB_NAME = dbName
+	DB_COLLECTION = dbCollection
+}

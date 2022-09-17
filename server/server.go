@@ -5,6 +5,8 @@ import (
 	"errors"
 	"log"
 
+	"github.com/Edilberto-Vazquez/website-services/database"
+	"github.com/Edilberto-Vazquez/website-services/repository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -41,12 +43,12 @@ func NewServer(ctx context.Context, config *Config) (*Broker, error) {
 }
 
 func (b *Broker) Start(binder func(s Server, r *gin.Engine)) {
-	// log.Println("Connecting to the DB")
-	// db, err := database.NewMongoDBRepository(constants.DB_NAME, constants.DB_COLLECTION, b.config.DataBaseUrl)
-	// if err != nil {
-	// 	log.Fatalf("Could not connect to DB %v", err)
-	// }
-	// repository.SetImplementedDB(db)
+	log.Println("Connecting to the DB")
+	db, err := database.NewMongoDBRepository(b.config.DataBaseUrl)
+	if err != nil {
+		log.Fatalf("Could not connect to DB %v", err)
+	}
+	repository.SetImplementedDB(db)
 	b.router.SetTrustedProxies([]string{"127.0.0.1"})
 	binder(b, b.router)
 	log.Println("Starting server on port", b.config.Port)

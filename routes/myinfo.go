@@ -9,6 +9,5 @@ func MyInfoRoutes(rg *gin.RouterGroup) {
 	myinfo := rg.Group("/my-info")
 	myinfo.GET("/profile", handlers.ProfileHandler())
 	myinfo.GET("/projects", handlers.ProjectsHandler())
-	myinfo.GET("/resume", handlers.ResumeHandler())
 	myinfo.GET("/jobs", handlers.JobsHandler())
 }

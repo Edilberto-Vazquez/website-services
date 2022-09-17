@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/Edilberto-Vazquez/website-services/constants"
 	"github.com/joho/godotenv"
 )
 
@@ -29,9 +30,9 @@ func NewConfig() (Config, error) {
 	prefix := SetEnvironment()
 	port := os.Getenv(prefix + "PORT")
 	dbUrl := os.Getenv(prefix + "DB_URL")
-	log.Println(prefix)
-	log.Println(port)
-	log.Println(dbUrl)
+	dbName := os.Getenv(prefix + "DB_NAME")
+	dbCollection := os.Getenv(prefix + "DB_COLLECTION")
+	constants.SetDB(dbName, dbCollection)
 	return Config{
 		Port:        port,
 		DataBaseUrl: dbUrl,
