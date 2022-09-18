@@ -1,18 +1,15 @@
 package constants
 
 import (
-	"time"
-
 	"github.com/gin-contrib/cors"
 )
 
 var (
 	CorsConfig = cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://edilberto-vazquez.github.io/"},
-		AllowMethods:     []string{"GET"},
+		AllowOrigins:     []string{"http://localhost:3000", "https://potatofy.dev", "https://goldfish-app-bixhm.ondigitalocean.app"},
+		AllowMethods:     []string{"GET", "POST"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Authorization", "Accept-Language"},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
 	}
 	DB_NAME            = ""
 	DB_COLLECTION      = ""
