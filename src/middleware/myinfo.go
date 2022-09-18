@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/Edilberto-Vazquez/website-services/i18n"
+	"github.com/Edilberto-Vazquez/website-services/src/i18n"
 	"github.com/gin-gonic/gin"
 )
 

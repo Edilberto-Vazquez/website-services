@@ -7,8 +7,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Edilberto-Vazquez/website-services/graph/generated"
-	"github.com/Edilberto-Vazquez/website-services/models"
+	"github.com/Edilberto-Vazquez/website-services/src/graph/generated"
+	"github.com/Edilberto-Vazquez/website-services/src/models"
 	"github.com/gin-gonic/gin"
 )
 

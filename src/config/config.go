@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Edilberto-Vazquez/website-services/constants"
+	"github.com/Edilberto-Vazquez/website-services/src/constants"
 	"github.com/joho/godotenv"
 )
 
@@ -17,7 +17,7 @@ func SetEnvironment() (environment string) {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal(err)
 	}
-	switch os.Getenv("APP_ENV") {
+	switch os.Getenv("GIN_MODE") {
 	case "production":
 		environment = ""
 	default:

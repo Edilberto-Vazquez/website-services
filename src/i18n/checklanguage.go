@@ -3,7 +3,7 @@ package i18n
 import (
 	"strings"
 
-	"github.com/Edilberto-Vazquez/website-services/constants"
+	"github.com/Edilberto-Vazquez/website-services/src/constants"
 )
 
 func CheckLanguage(lang string) (value string, exists bool) {

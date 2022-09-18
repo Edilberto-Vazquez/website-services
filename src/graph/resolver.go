@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"github.com/Edilberto-Vazquez/website-services/repository"
+	"github.com/Edilberto-Vazquez/website-services/src/repository"
 )
 
 // This file will not be regenerated automatically.

@@ -3,8 +3,8 @@ package database
 import (
 	"context"
 
-	"github.com/Edilberto-Vazquez/website-services/constants"
-	"github.com/Edilberto-Vazquez/website-services/models"
+	"github.com/Edilberto-Vazquez/website-services/src/constants"
+	"github.com/Edilberto-Vazquez/website-services/src/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

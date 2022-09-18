@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/Edilberto-Vazquez/website-services/models"
+	"github.com/Edilberto-Vazquez/website-services/src/models"
 )
 
 type DBRepository interface {

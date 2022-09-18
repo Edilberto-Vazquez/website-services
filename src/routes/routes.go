@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"github.com/Edilberto-Vazquez/website-services/constants"
-	"github.com/Edilberto-Vazquez/website-services/middleware"
-	"github.com/Edilberto-Vazquez/website-services/server"
+	"github.com/Edilberto-Vazquez/website-services/src/constants"
+	"github.com/Edilberto-Vazquez/website-services/src/middleware"
+	"github.com/Edilberto-Vazquez/website-services/src/server"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

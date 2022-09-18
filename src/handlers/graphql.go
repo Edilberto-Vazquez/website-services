@@ -3,9 +3,9 @@ package handlers
 import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/Edilberto-Vazquez/website-services/graph"
-	"github.com/Edilberto-Vazquez/website-services/graph/generated"
-	"github.com/Edilberto-Vazquez/website-services/repository"
+	"github.com/Edilberto-Vazquez/website-services/src/graph"
+	"github.com/Edilberto-Vazquez/website-services/src/graph/generated"
+	"github.com/Edilberto-Vazquez/website-services/src/repository"
 	"github.com/gin-gonic/gin"
 )
 

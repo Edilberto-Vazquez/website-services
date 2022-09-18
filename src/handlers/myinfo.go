@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/Edilberto-Vazquez/website-services/repository"
+	"github.com/Edilberto-Vazquez/website-services/src/repository"
 	"github.com/gin-gonic/gin"
 )
 

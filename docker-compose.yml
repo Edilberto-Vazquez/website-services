@@ -1,6 +1,13 @@
 version: "3.8"
 
 services:
+  website-api:
+    container_name: website-api
+    image: website-api
+    ports:
+      - 5050:5050
+    environment:
+      GIN_MODE: release
   mongodb:
     container_name: mongodb
     image: mongo:latest

@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/Edilberto-Vazquez/website-services/handlers"
-	"github.com/Edilberto-Vazquez/website-services/repository"
+	"github.com/Edilberto-Vazquez/website-services/src/handlers"
+	"github.com/Edilberto-Vazquez/website-services/src/repository"
 	"github.com/gin-gonic/gin"
 )
 

@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	"github.com/Edilberto-Vazquez/website-services/config"
-	"github.com/Edilberto-Vazquez/website-services/routes"
-	"github.com/Edilberto-Vazquez/website-services/server"
+	"github.com/Edilberto-Vazquez/website-services/src/config"
+	"github.com/Edilberto-Vazquez/website-services/src/routes"
+	"github.com/Edilberto-Vazquez/website-services/src/server"
 )
 
 func main() {

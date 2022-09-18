@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/Edilberto-Vazquez/website-services/database"
-	"github.com/Edilberto-Vazquez/website-services/repository"
+	"github.com/Edilberto-Vazquez/website-services/src/database"
+	"github.com/Edilberto-Vazquez/website-services/src/repository"
 	"github.com/gin-gonic/gin"
 )
 
