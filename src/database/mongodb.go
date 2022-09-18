@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"time"
 
 	"github.com/Edilberto-Vazquez/website-services/src/constants"
 	"github.com/Edilberto-Vazquez/website-services/src/models"
@@ -23,9 +24,11 @@ type jobList struct {
 }
 
 func NewMongoDBRepository(url string) (*MongoDBRepository, error) {
-	opts := options.Client()
-	opts.ApplyURI(url)
-	client, err := mongo.Connect(context.TODO(), opts)
+	serverAPIOptions := options.ServerAPI(options.ServerAPIVersion1)
+	opts := options.Client().ApplyURI(url).SetServerAPIOptions(serverAPIOptions)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
