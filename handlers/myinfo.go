@@ -7,10 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ProfileHandler() gin.HandlerFunc {
+func ProfileHandler(repo repository.DBRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		lang := ctx.MustGet("lang").(string)
-		profile, err := repository.GetProfile(ctx, lang)
+		profile, err := repo.GetProfile(ctx, lang)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
@@ -22,10 +22,10 @@ func ProfileHandler() gin.HandlerFunc {
 	}
 }
 
-func ProjectsHandler() gin.HandlerFunc {
+func ProjectsHandler(repo repository.DBRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		lang := ctx.MustGet("lang").(string)
-		profile, err := repository.GetProjects(ctx, lang)
+		profile, err := repo.GetProjects(ctx, lang)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),
@@ -37,10 +37,10 @@ func ProjectsHandler() gin.HandlerFunc {
 	}
 }
 
-func JobsHandler() gin.HandlerFunc {
+func JobsHandler(repo repository.DBRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		lang := ctx.MustGet("lang").(string)
-		profile, err := repository.GetJobs(ctx, lang)
+		profile, err := repo.GetJobs(ctx, lang)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"error": err.Error(),

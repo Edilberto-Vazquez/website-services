@@ -17,15 +17,21 @@ type Config struct {
 
 type Server interface {
 	Config() *Config
+	Repo() repository.DBRepository
 }
 
 type Broker struct {
 	config *Config
 	router *gin.Engine
+	repo   repository.DBRepository
 }
 
 func (b *Broker) Config() *Config {
 	return b.config
+}
+
+func (b *Broker) Repo() repository.DBRepository {
+	return b.repo
 }
 
 func NewServer(ctx context.Context, config *Config) (*Broker, error) {
@@ -48,7 +54,7 @@ func (b *Broker) Start(binder func(s Server, r *gin.Engine)) {
 	if err != nil {
 		log.Fatalf("Could not connect to DB %v", err)
 	}
-	repository.SetImplementedDB(db)
+	b.repo = db
 	b.router.SetTrustedProxies([]string{"127.0.0.1"})
 	binder(b, b.router)
 	log.Println("Starting server on port", b.config.Port)

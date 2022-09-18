@@ -9,7 +9,6 @@ import (
 
 	"github.com/Edilberto-Vazquez/website-services/graph/generated"
 	"github.com/Edilberto-Vazquez/website-services/models"
-	"github.com/Edilberto-Vazquez/website-services/repository"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,7 +34,7 @@ func (r *queryResolver) Profile(ctx context.Context) (*models.Profile, error) {
 		return nil, err
 	}
 	lang := gc.MustGet("lang").(string)
-	profile, err := repository.GetProfile(gc, lang)
+	profile, err := r.db.GetProfile(gc, lang)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +48,7 @@ func (r *queryResolver) Projects(ctx context.Context) ([]*models.Project, error)
 		return nil, err
 	}
 	lang := gc.MustGet("lang").(string)
-	projects, err := repository.GetProjects(gc, lang)
+	projects, err := r.db.GetProjects(gc, lang)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +62,7 @@ func (r *queryResolver) Jobs(ctx context.Context) ([]*models.Job, error) {
 		return nil, err
 	}
 	lang := gc.MustGet("lang").(string)
-	jobs, err := repository.GetJobs(gc, lang)
+	jobs, err := r.db.GetJobs(gc, lang)
 	if err != nil {
 		return nil, err
 	}
