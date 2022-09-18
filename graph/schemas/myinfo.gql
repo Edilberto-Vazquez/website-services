@@ -1,0 +1,39 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Profile {
+  Image: String
+  Name: String
+  Description: String
+  Email: String
+  Technologies: [String]
+  Resume: String
+}
+
+type Project {
+  Name: String
+  Description: String
+  Repository: String
+  Technologies: [String]
+  Website: String
+}
+
+type Dates {
+  from: String
+  to: String
+}
+
+type Job {
+  position: String
+  company: String
+  location: String
+  description: String
+  dates: Dates
+}
+
+type Query {
+  profile: Profile
+  projects: [Project]
+  jobs: [Job]
+}

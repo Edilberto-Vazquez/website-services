@@ -9,8 +9,16 @@ import (
 )
 
 func GetRoutes(s server.Server, r *gin.Engine) {
+	// rest api
 	v1 := r.Group("/api/v1")
 	v1.Use(cors.New(constants.CorsConfig))
 	v1.Use(middleware.LanguageMiddleware())
 	MyInfoRoutes(v1)
+
+	// graphql api
+	gql := r.Group("/gql")
+	gql.Use(middleware.LanguageMiddleware())
+	gql.Use(middleware.GinContextToContextMiddleware())
+	GqlRoutes(gql)
+
 }

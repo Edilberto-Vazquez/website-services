@@ -7,9 +7,9 @@ import (
 )
 
 type DBRepository interface {
-	GetProfile(ctx context.Context, lang string) (profile models.Profile, err error)
-	GetProjects(ctx context.Context, lang string) (projects models.Projects, err error)
-	GetJobs(ctx context.Context, lang string) (jobs models.Jobs, err error)
+	GetProfile(ctx context.Context, lang string) (*models.Profile, error)
+	GetProjects(ctx context.Context, lang string) ([]*models.Project, error)
+	GetJobs(ctx context.Context, lang string) ([]*models.Job, error)
 }
 
 var implementedDB DBRepository
@@ -18,14 +18,14 @@ func SetImplementedDB(implementation DBRepository) {
 	implementedDB = implementation
 }
 
-func GetProfile(ctx context.Context, lang string) (profile models.Profile, err error) {
+func GetProfile(ctx context.Context, lang string) (*models.Profile, error) {
 	return implementedDB.GetProfile(ctx, lang)
 }
 
-func GetProjects(ctx context.Context, lang string) (projects models.Projects, err error) {
+func GetProjects(ctx context.Context, lang string) ([]*models.Project, error) {
 	return implementedDB.GetProjects(ctx, lang)
 }
 
-func GetJobs(ctx context.Context, lang string) (jobs models.Jobs, err error) {
+func GetJobs(ctx context.Context, lang string) ([]*models.Job, error) {
 	return implementedDB.GetJobs(ctx, lang)
 }
