@@ -15,6 +15,5 @@ RUN CGO_ENABLED=0 go build \
 FROM alpine:latest AS runner
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs
 COPY --from=builder /website-api /website-api
-COPY .env ./
 EXPOSE 8000
 ENTRYPOINT [ "/website-api" ]
