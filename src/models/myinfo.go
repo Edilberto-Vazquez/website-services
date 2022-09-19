@@ -17,10 +17,6 @@ type Project struct {
 	Website      string   `json:"website" bson:"website"`
 }
 
-type Projects struct {
-	List []Project `json:"projects" bson:"projects"`
-}
-
 type Dates struct {
 	From string `json:"from" bson:"from"`
 	To   string `json:"to" bson:"to"`
@@ -32,8 +28,4 @@ type Job struct {
 	Location    string `json:"location" bson:"location"`
 	Description string `json:"description" bson:"description"`
 	Dates       Dates  `json:"dates" bson:"dates"`
-}
-
-type Jobs struct {
-	List []Job `json:"jobs" bson:"jobs"`
 }

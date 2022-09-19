@@ -6,9 +6,9 @@ import (
 
 var (
 	CorsConfig = cors.Config{
-		AllowOrigins:     []string{"https://potatofy.dev", "https://goldfish-app-bixhm.ondigitalocean.app"},
+		AllowOrigins:     []string{"http://localhost:3000", "https://potatofy.dev", "https://goldfish-app-bixhm.ondigitalocean.app"},
 		AllowMethods:     []string{"GET", "POST"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Authorization", "Accept-Language"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Authorization"},
 		AllowCredentials: true,
 	}
 	DB_NAME            = ""
