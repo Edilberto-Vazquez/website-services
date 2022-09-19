@@ -6,7 +6,7 @@ import (
 
 var (
 	CorsConfig = cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://potatofy.dev", "https://goldfish-app-bixhm.ondigitalocean.app"},
+		AllowOrigins:     []string{"https://potatofy.dev", "https://goldfish-app-bixhm.ondigitalocean.app"},
 		AllowMethods:     []string{"GET", "POST"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Content-Length", "Authorization", "Accept-Language"},
 		AllowCredentials: true,

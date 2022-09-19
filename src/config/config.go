@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/Edilberto-Vazquez/website-services/src/constants"
 	"github.com/joho/godotenv"
@@ -13,25 +14,24 @@ type Config struct {
 	Port        string
 }
 
-func SetEnvironment() (environment string) {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal(err)
-	}
+func getEnvVar(envVar string) (environment string) {
 	switch os.Getenv("GIN_MODE") {
-	case "production":
-		environment = ""
+	case "release":
+		environment = envVar
 	default:
-		environment = "DEV_"
+		environment = strings.Join([]string{"DEV", envVar}, "_")
 	}
 	return
 }
 
 func NewConfig() (Config, error) {
-	prefix := SetEnvironment()
-	port := os.Getenv(prefix + "PORT")
-	dbUrl := os.Getenv(prefix + "DB_URL")
-	dbName := os.Getenv(prefix + "DB_NAME")
-	dbCollection := os.Getenv(prefix + "DB_COLLECTION")
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+	port := os.Getenv(getEnvVar("PORT"))
+	dbUrl := os.Getenv(getEnvVar("DB_URL"))
+	dbName := os.Getenv(getEnvVar("DB_NAME"))
+	dbCollection := os.Getenv(getEnvVar("DB_COLLECTION"))
 	constants.SetDB(dbName, dbCollection)
 	return Config{
 		Port:        port,
