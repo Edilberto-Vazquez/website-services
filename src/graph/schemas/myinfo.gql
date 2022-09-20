@@ -1,7 +1,3 @@
-# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
-
 type Profile {
   Image: String
   Name: String
@@ -32,8 +28,12 @@ type Job {
   dates: Dates
 }
 
+input Languaje {
+  lang: String!
+}
+
 type Query {
-  profile: Profile
-  projects: [Project]
-  jobs: [Job]
+  profile(input: Languaje!): Profile
+  projects(input: Languaje!): [Project]
+  jobs(input: Languaje!): [Job]
 }

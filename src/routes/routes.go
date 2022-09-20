@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/Edilberto-Vazquez/website-services/src/constants"
+	"github.com/Edilberto-Vazquez/website-services/src/handlers"
 	"github.com/Edilberto-Vazquez/website-services/src/middleware"
 	"github.com/Edilberto-Vazquez/website-services/src/server"
 	"github.com/gin-contrib/cors"
@@ -17,9 +18,7 @@ func GetRoutes(s server.Server, r *gin.Engine) {
 	MyInfoRoutes(repo, v1)
 
 	// graphql api
-	gql := r.Group("/gql")
-	gql.Use(middleware.LanguageMiddleware())
-	gql.Use(middleware.GinContextToContextMiddleware())
-	GqlRoutes(repo, gql)
-
+	r.Use(middleware.GinContextToContextMiddleware())
+	r.POST("/query", handlers.GraphqlHandler(repo))
+	r.GET("/playground", handlers.PlaygroundHandler())
 }

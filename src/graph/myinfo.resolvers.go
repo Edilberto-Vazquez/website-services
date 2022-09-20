@@ -1,16 +1,18 @@
 package graph
 
-// This file will be automatically regenerated based on the schema, any resolver implementations
-// will be copied through when generating and any unknown code will be moved to the end.
-
 import (
 	"context"
 	"fmt"
 
 	"github.com/Edilberto-Vazquez/website-services/src/graph/generated"
+	"github.com/Edilberto-Vazquez/website-services/src/i18n"
 	"github.com/Edilberto-Vazquez/website-services/src/models"
 	"github.com/gin-gonic/gin"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
+
+// This file will be automatically regenerated based on the schema, any resolver implementations
+// will be copied through when generating and any unknown code will be moved to the end.
 
 func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
 	ginContext := ctx.Value("GinContextKey")
@@ -28,13 +30,16 @@ func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
 }
 
 // Profile is the resolver for the profile field.
-func (r *queryResolver) Profile(ctx context.Context) (*models.Profile, error) {
+func (r *queryResolver) Profile(ctx context.Context, input models.Languaje) (*models.Profile, error) {
 	gc, err := GinContextFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	lang := gc.MustGet("lang").(string)
-	profile, err := r.db.GetProfile(gc, lang)
+	value, exist := i18n.CheckLanguage(input.Lang)
+	if !exist {
+		return nil, gqlerror.Errorf("The app cannot provide that language")
+	}
+	profile, err := r.db.GetProfile(gc, value)
 	if err != nil {
 		return nil, err
 	}
@@ -42,13 +47,16 @@ func (r *queryResolver) Profile(ctx context.Context) (*models.Profile, error) {
 }
 
 // Projects is the resolver for the projects field.
-func (r *queryResolver) Projects(ctx context.Context) ([]*models.Project, error) {
+func (r *queryResolver) Projects(ctx context.Context, input models.Languaje) ([]*models.Project, error) {
 	gc, err := GinContextFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	lang := gc.MustGet("lang").(string)
-	projects, err := r.db.GetProjects(gc, lang)
+	value, exist := i18n.CheckLanguage(input.Lang)
+	if !exist {
+		return nil, gqlerror.Errorf("The app cannot provide that language")
+	}
+	projects, err := r.db.GetProjects(gc, value)
 	if err != nil {
 		return nil, err
 	}
@@ -56,13 +64,16 @@ func (r *queryResolver) Projects(ctx context.Context) ([]*models.Project, error)
 }
 
 // Jobs is the resolver for the jobs field.
-func (r *queryResolver) Jobs(ctx context.Context) ([]*models.Job, error) {
+func (r *queryResolver) Jobs(ctx context.Context, input models.Languaje) ([]*models.Job, error) {
 	gc, err := GinContextFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	lang := gc.MustGet("lang").(string)
-	jobs, err := r.db.GetJobs(gc, lang)
+	value, exist := i18n.CheckLanguage(input.Lang)
+	if !exist {
+		return nil, gqlerror.Errorf("The app cannot provide that language")
+	}
+	jobs, err := r.db.GetJobs(gc, value)
 	if err != nil {
 		return nil, err
 	}

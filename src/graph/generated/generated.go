@@ -73,16 +73,16 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Jobs     func(childComplexity int) int
-		Profile  func(childComplexity int) int
-		Projects func(childComplexity int) int
+		Jobs     func(childComplexity int, input models.Languaje) int
+		Profile  func(childComplexity int, input models.Languaje) int
+		Projects func(childComplexity int, input models.Languaje) int
 	}
 }
 
 type QueryResolver interface {
-	Profile(ctx context.Context) (*models.Profile, error)
-	Projects(ctx context.Context) ([]*models.Project, error)
-	Jobs(ctx context.Context) ([]*models.Job, error)
+	Profile(ctx context.Context, input models.Languaje) (*models.Profile, error)
+	Projects(ctx context.Context, input models.Languaje) ([]*models.Project, error)
+	Jobs(ctx context.Context, input models.Languaje) ([]*models.Job, error)
 }
 
 type executableSchema struct {
@@ -231,21 +231,36 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Jobs(childComplexity), true
+		args, err := ec.field_Query_jobs_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Jobs(childComplexity, args["input"].(models.Languaje)), true
 
 	case "Query.profile":
 		if e.complexity.Query.Profile == nil {
 			break
 		}
 
-		return e.complexity.Query.Profile(childComplexity), true
+		args, err := ec.field_Query_profile_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Profile(childComplexity, args["input"].(models.Languaje)), true
 
 	case "Query.projects":
 		if e.complexity.Query.Projects == nil {
 			break
 		}
 
-		return e.complexity.Query.Projects(childComplexity), true
+		args, err := ec.field_Query_projects_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Projects(childComplexity, args["input"].(models.Languaje)), true
 
 	}
 	return 0, false
@@ -254,7 +269,9 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
-	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
+	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputLanguaje,
+	)
 	first := true
 
 	switch rc.Operation.Operation {
@@ -299,11 +316,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schemas/myinfo.gql", Input: `# GraphQL schema example
-#
-# https://gqlgen.com/getting-started/
-
-type Profile {
+	{Name: "../schemas/myinfo.gql", Input: `type Profile {
   Image: String
   Name: String
   Description: String
@@ -333,10 +346,14 @@ type Job {
   dates: Dates
 }
 
+input Languaje {
+  lang: String!
+}
+
 type Query {
-  profile: Profile
-  projects: [Project]
-  jobs: [Job]
+  profile(input: Languaje!): Profile
+  projects(input: Languaje!): [Project]
+  jobs(input: Languaje!): [Job]
 }
 `, BuiltIn: false},
 }
@@ -358,6 +375,51 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_jobs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.Languaje
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_profile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.Languaje
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 models.Languaje
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -670,7 +732,7 @@ func (ec *executionContext) _Job_dates(ctx context.Context, field graphql.Collec
 	}
 	res := resTmp.(models.Dates)
 	fc.Result = res
-	return ec.marshalODates2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐDates(ctx, field.Selections, res)
+	return ec.marshalODates2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐDates(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Job_dates(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1157,7 +1219,7 @@ func (ec *executionContext) _Query_profile(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Profile(rctx)
+		return ec.resolvers.Query().Profile(rctx, fc.Args["input"].(models.Languaje))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1168,7 +1230,7 @@ func (ec *executionContext) _Query_profile(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(*models.Profile)
 	fc.Result = res
-	return ec.marshalOProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐProfile(ctx, field.Selections, res)
+	return ec.marshalOProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProfile(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_profile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1195,6 +1257,17 @@ func (ec *executionContext) fieldContext_Query_profile(ctx context.Context, fiel
 			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
 		},
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_profile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
 	return fc, nil
 }
 
@@ -1212,7 +1285,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx)
+		return ec.resolvers.Query().Projects(rctx, fc.Args["input"].(models.Languaje))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1223,7 +1296,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	}
 	res := resTmp.([]*models.Project)
 	fc.Result = res
-	return ec.marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐProject(ctx, field.Selections, res)
+	return ec.marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_projects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1248,6 +1321,17 @@ func (ec *executionContext) fieldContext_Query_projects(ctx context.Context, fie
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_projects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
 	return fc, nil
 }
 
@@ -1265,7 +1349,7 @@ func (ec *executionContext) _Query_jobs(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Jobs(rctx)
+		return ec.resolvers.Query().Jobs(rctx, fc.Args["input"].(models.Languaje))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1276,7 +1360,7 @@ func (ec *executionContext) _Query_jobs(ctx context.Context, field graphql.Colle
 	}
 	res := resTmp.([]*models.Job)
 	fc.Result = res
-	return ec.marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐJob(ctx, field.Selections, res)
+	return ec.marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_jobs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1300,6 +1384,17 @@ func (ec *executionContext) fieldContext_Query_jobs(ctx context.Context, field g
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Job", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_jobs_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -3206,6 +3301,34 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputLanguaje(ctx context.Context, obj interface{}) (models.Languaje, error) {
+	var it models.Languaje
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"lang"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "lang":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lang"))
+			it.Lang, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3805,6 +3928,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx context.Context, v interface{}) (models.Languaje, error) {
+	res, err := ec.unmarshalInputLanguaje(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4099,11 +4227,11 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) marshalODates2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐDates(ctx context.Context, sel ast.SelectionSet, v models.Dates) graphql.Marshaler {
+func (ec *executionContext) marshalODates2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐDates(ctx context.Context, sel ast.SelectionSet, v models.Dates) graphql.Marshaler {
 	return ec._Dates(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v []*models.Job) graphql.Marshaler {
+func (ec *executionContext) marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v []*models.Job) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4130,7 +4258,7 @@ func (ec *executionContext) marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquez
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOJob2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐJob(ctx, sel, v[i])
+			ret[i] = ec.marshalOJob2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4144,21 +4272,21 @@ func (ec *executionContext) marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquez
 	return ret
 }
 
-func (ec *executionContext) marshalOJob2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v *models.Job) graphql.Marshaler {
+func (ec *executionContext) marshalOJob2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v *models.Job) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Job(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐProfile(ctx context.Context, sel ast.SelectionSet, v *models.Profile) graphql.Marshaler {
+func (ec *executionContext) marshalOProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProfile(ctx context.Context, sel ast.SelectionSet, v *models.Profile) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Profile(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v []*models.Project) graphql.Marshaler {
+func (ec *executionContext) marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v []*models.Project) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4185,7 +4313,7 @@ func (ec *executionContext) marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVaz
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOProject2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐProject(ctx, sel, v[i])
+			ret[i] = ec.marshalOProject2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4199,7 +4327,7 @@ func (ec *executionContext) marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVaz
 	return ret
 }
 
-func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v *models.Project) graphql.Marshaler {
+func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v *models.Project) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
