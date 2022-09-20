@@ -65,3 +65,12 @@ func (mongo *MongoDBRepository) GetJobs(ctx context.Context, lang string) ([]*mo
 	}
 	return res.Jobs, nil
 }
+
+func (mongo *MongoDBRepository) GetFullProfile(ctx context.Context, lang string) (fullProfile *models.FullProfile, err error) {
+	filter := bson.M{"lang": lang}
+	err = mongo.coll.FindOne(ctx, filter).Decode(&fullProfile)
+	if err != nil {
+		return nil, err
+	}
+	return fullProfile, nil
+}

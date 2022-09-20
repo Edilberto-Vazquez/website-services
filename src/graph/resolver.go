@@ -13,7 +13,6 @@ type Resolver struct {
 }
 
 func NewResolver(db repository.DBRepository) *Resolver {
-	repository.SetImplementedDB(db)
 	return &Resolver{
 		db: db,
 	}

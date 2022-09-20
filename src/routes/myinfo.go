@@ -11,4 +11,5 @@ func MyInfoRoutes(repo repository.DBRepository, rg *gin.RouterGroup) {
 	myinfo.GET("/profile", handlers.ProfileHandler(repo))
 	myinfo.GET("/projects", handlers.ProjectsHandler(repo))
 	myinfo.GET("/jobs", handlers.JobsHandler(repo))
+	myinfo.GET("/full-profile", handlers.FullProfileHandler(repo))
 }

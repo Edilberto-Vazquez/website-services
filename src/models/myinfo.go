@@ -29,3 +29,9 @@ type Job struct {
 	Description string `json:"description" bson:"description"`
 	Dates       Dates  `json:"dates" bson:"dates"`
 }
+
+type FullProfile struct {
+	Profile
+	Projects []Project
+	Jobs     []Job
+}

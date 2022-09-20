@@ -18,6 +18,7 @@ func GetRoutes(s server.Server, r *gin.Engine) {
 	MyInfoRoutes(repo, v1)
 
 	// graphql api
+	r.Use(cors.New(constants.CorsConfig))
 	r.Use(middleware.GinContextToContextMiddleware())
 	r.POST("/query", handlers.GraphqlHandler(repo))
 	r.GET("/playground", handlers.PlaygroundHandler())
