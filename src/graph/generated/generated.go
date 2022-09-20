@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -47,21 +48,23 @@ type ComplexityRoot struct {
 		To   func(childComplexity int) int
 	}
 
+	FullProfile struct {
+		Description  func(childComplexity int) int
+		Email        func(childComplexity int) int
+		Image        func(childComplexity int) int
+		Jobs         func(childComplexity int) int
+		Name         func(childComplexity int) int
+		Projects     func(childComplexity int) int
+		Resume       func(childComplexity int) int
+		Technologies func(childComplexity int) int
+	}
+
 	Job struct {
 		Company     func(childComplexity int) int
 		Dates       func(childComplexity int) int
 		Description func(childComplexity int) int
 		Location    func(childComplexity int) int
 		Position    func(childComplexity int) int
-	}
-
-	Profile struct {
-		Description  func(childComplexity int) int
-		Email        func(childComplexity int) int
-		Image        func(childComplexity int) int
-		Name         func(childComplexity int) int
-		Resume       func(childComplexity int) int
-		Technologies func(childComplexity int) int
 	}
 
 	Project struct {
@@ -73,16 +76,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Jobs     func(childComplexity int, input models.Languaje) int
-		Profile  func(childComplexity int, input models.Languaje) int
-		Projects func(childComplexity int, input models.Languaje) int
+		FullProfile func(childComplexity int, lang string) int
 	}
 }
 
 type QueryResolver interface {
-	Profile(ctx context.Context, input models.Languaje) (*models.Profile, error)
-	Projects(ctx context.Context, input models.Languaje) ([]*models.Project, error)
-	Jobs(ctx context.Context, input models.Languaje) ([]*models.Job, error)
+	FullProfile(ctx context.Context, lang string) (*models.FullProfile, error)
 }
 
 type executableSchema struct {
@@ -113,6 +112,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Dates.To(childComplexity), true
+
+	case "FullProfile.description":
+		if e.complexity.FullProfile.Description == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Description(childComplexity), true
+
+	case "FullProfile.email":
+		if e.complexity.FullProfile.Email == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Email(childComplexity), true
+
+	case "FullProfile.image":
+		if e.complexity.FullProfile.Image == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Image(childComplexity), true
+
+	case "FullProfile.jobs":
+		if e.complexity.FullProfile.Jobs == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Jobs(childComplexity), true
+
+	case "FullProfile.name":
+		if e.complexity.FullProfile.Name == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Name(childComplexity), true
+
+	case "FullProfile.projects":
+		if e.complexity.FullProfile.Projects == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Projects(childComplexity), true
+
+	case "FullProfile.resume":
+		if e.complexity.FullProfile.Resume == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Resume(childComplexity), true
+
+	case "FullProfile.technologies":
+		if e.complexity.FullProfile.Technologies == nil {
+			break
+		}
+
+		return e.complexity.FullProfile.Technologies(childComplexity), true
 
 	case "Job.company":
 		if e.complexity.Job.Company == nil {
@@ -149,70 +204,28 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Job.Position(childComplexity), true
 
-	case "Profile.Description":
-		if e.complexity.Profile.Description == nil {
-			break
-		}
-
-		return e.complexity.Profile.Description(childComplexity), true
-
-	case "Profile.Email":
-		if e.complexity.Profile.Email == nil {
-			break
-		}
-
-		return e.complexity.Profile.Email(childComplexity), true
-
-	case "Profile.Image":
-		if e.complexity.Profile.Image == nil {
-			break
-		}
-
-		return e.complexity.Profile.Image(childComplexity), true
-
-	case "Profile.Name":
-		if e.complexity.Profile.Name == nil {
-			break
-		}
-
-		return e.complexity.Profile.Name(childComplexity), true
-
-	case "Profile.Resume":
-		if e.complexity.Profile.Resume == nil {
-			break
-		}
-
-		return e.complexity.Profile.Resume(childComplexity), true
-
-	case "Profile.Technologies":
-		if e.complexity.Profile.Technologies == nil {
-			break
-		}
-
-		return e.complexity.Profile.Technologies(childComplexity), true
-
-	case "Project.Description":
+	case "Project.description":
 		if e.complexity.Project.Description == nil {
 			break
 		}
 
 		return e.complexity.Project.Description(childComplexity), true
 
-	case "Project.Name":
+	case "Project.name":
 		if e.complexity.Project.Name == nil {
 			break
 		}
 
 		return e.complexity.Project.Name(childComplexity), true
 
-	case "Project.Repository":
+	case "Project.repository":
 		if e.complexity.Project.Repository == nil {
 			break
 		}
 
 		return e.complexity.Project.Repository(childComplexity), true
 
-	case "Project.Technologies":
+	case "Project.technologies":
 		if e.complexity.Project.Technologies == nil {
 			break
 		}
@@ -226,41 +239,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.Website(childComplexity), true
 
-	case "Query.jobs":
-		if e.complexity.Query.Jobs == nil {
+	case "Query.fullProfile":
+		if e.complexity.Query.FullProfile == nil {
 			break
 		}
 
-		args, err := ec.field_Query_jobs_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_fullProfile_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Jobs(childComplexity, args["input"].(models.Languaje)), true
-
-	case "Query.profile":
-		if e.complexity.Query.Profile == nil {
-			break
-		}
-
-		args, err := ec.field_Query_profile_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Profile(childComplexity, args["input"].(models.Languaje)), true
-
-	case "Query.projects":
-		if e.complexity.Query.Projects == nil {
-			break
-		}
-
-		args, err := ec.field_Query_projects_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.Projects(childComplexity, args["input"].(models.Languaje)), true
+		return e.complexity.Query.FullProfile(childComplexity, args["lang"].(string)), true
 
 	}
 	return 0, false
@@ -269,9 +258,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
-	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputLanguaje,
-	)
+	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
 	first := true
 
 	switch rc.Operation.Operation {
@@ -316,20 +303,11 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../schemas/myinfo.gql", Input: `type Profile {
-  Image: String
-  Name: String
-  Description: String
-  Email: String
-  Technologies: [String]
-  Resume: String
-}
-
-type Project {
-  Name: String
-  Description: String
-  Repository: String
-  Technologies: [String]
+	{Name: "../schemas/myinfo.gql", Input: `type Project {
+  name: String
+  description: String
+  repository: String
+  technologies: [String]
   Website: String
 }
 
@@ -346,14 +324,19 @@ type Job {
   dates: Dates
 }
 
-input Languaje {
-  lang: String!
+type FullProfile {
+  image: String
+  name: String
+  description: String
+  email: String
+  technologies: [String]
+  resume: String
+  projects: [Project]
+  jobs: [Job]
 }
 
 type Query {
-  profile(input: Languaje!): Profile
-  projects(input: Languaje!): [Project]
-  jobs(input: Languaje!): [Job]
+  fullProfile(lang: String!): FullProfile!
 }
 `, BuiltIn: false},
 }
@@ -378,48 +361,18 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_jobs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_fullProfile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 models.Languaje
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["lang"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lang"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_profile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.Languaje
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 models.Languaje
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
+	args["lang"] = arg0
 	return args, nil
 }
 
@@ -538,6 +491,358 @@ func (ec *executionContext) fieldContext_Dates_to(ctx context.Context, field gra
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_image(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_image(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_image(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_name(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_description(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_email(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_technologies(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_technologies(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Technologies, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_technologies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_resume(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_resume(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Resume, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_resume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_projects(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_projects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Projects, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]models.Project)
+	fc.Result = res
+	return ec.marshalOProject2ᚕgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_projects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_Project_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Project_description(ctx, field)
+			case "repository":
+				return ec.fieldContext_Project_repository(ctx, field)
+			case "technologies":
+				return ec.fieldContext_Project_technologies(ctx, field)
+			case "Website":
+				return ec.fieldContext_Project_Website(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FullProfile_jobs(ctx context.Context, field graphql.CollectedField, obj *models.FullProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FullProfile_jobs(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Jobs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]models.Job)
+	fc.Result = res
+	return ec.marshalOJob2ᚕgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FullProfile_jobs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FullProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "position":
+				return ec.fieldContext_Job_position(ctx, field)
+			case "company":
+				return ec.fieldContext_Job_company(ctx, field)
+			case "location":
+				return ec.fieldContext_Job_location(ctx, field)
+			case "description":
+				return ec.fieldContext_Job_description(ctx, field)
+			case "dates":
+				return ec.fieldContext_Job_dates(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Job", field.Name)
 		},
 	}
 	return fc, nil
@@ -754,49 +1059,8 @@ func (ec *executionContext) fieldContext_Job_dates(ctx context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Profile_Image(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_Image(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Image, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Profile_Image(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Profile",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Profile_Name(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_Name(ctx, field)
+func (ec *executionContext) _Project_name(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_name(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -823,9 +1087,9 @@ func (ec *executionContext) _Profile_Name(ctx context.Context, field graphql.Col
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Profile_Name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Profile",
+		Object:     "Project",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -836,8 +1100,8 @@ func (ec *executionContext) fieldContext_Profile_Name(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Profile_Description(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_Description(ctx, field)
+func (ec *executionContext) _Project_description(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_description(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -864,171 +1128,7 @@ func (ec *executionContext) _Profile_Description(ctx context.Context, field grap
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Profile_Description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Profile",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Profile_Email(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_Email(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Email, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Profile_Email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Profile",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Profile_Technologies(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_Technologies(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Technologies, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Profile_Technologies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Profile",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Profile_Resume(ctx context.Context, field graphql.CollectedField, obj *models.Profile) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Profile_Resume(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Resume, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Profile_Resume(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Profile",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Project_Name(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_Name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Project_Name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -1041,49 +1141,8 @@ func (ec *executionContext) fieldContext_Project_Name(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_Description(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_Description(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Project_Description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Project",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Project_Repository(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_Repository(ctx, field)
+func (ec *executionContext) _Project_repository(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_repository(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1110,7 +1169,7 @@ func (ec *executionContext) _Project_Repository(ctx context.Context, field graph
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_Repository(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_repository(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -1123,8 +1182,8 @@ func (ec *executionContext) fieldContext_Project_Repository(ctx context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_Technologies(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_Technologies(ctx, field)
+func (ec *executionContext) _Project_technologies(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_technologies(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1151,7 +1210,7 @@ func (ec *executionContext) _Project_Technologies(ctx context.Context, field gra
 	return ec.marshalOString2ᚕstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_Technologies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_technologies(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -1205,8 +1264,8 @@ func (ec *executionContext) fieldContext_Project_Website(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_profile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_profile(ctx, field)
+func (ec *executionContext) _Query_fullProfile(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_fullProfile(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1219,21 +1278,24 @@ func (ec *executionContext) _Query_profile(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Profile(rctx, fc.Args["input"].(models.Languaje))
+		return ec.resolvers.Query().FullProfile(rctx, fc.Args["lang"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*models.Profile)
+	res := resTmp.(*models.FullProfile)
 	fc.Result = res
-	return ec.marshalOProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProfile(ctx, field.Selections, res)
+	return ec.marshalNFullProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐFullProfile(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_profile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_fullProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1241,148 +1303,24 @@ func (ec *executionContext) fieldContext_Query_profile(ctx context.Context, fiel
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "Image":
-				return ec.fieldContext_Profile_Image(ctx, field)
-			case "Name":
-				return ec.fieldContext_Profile_Name(ctx, field)
-			case "Description":
-				return ec.fieldContext_Profile_Description(ctx, field)
-			case "Email":
-				return ec.fieldContext_Profile_Email(ctx, field)
-			case "Technologies":
-				return ec.fieldContext_Profile_Technologies(ctx, field)
-			case "Resume":
-				return ec.fieldContext_Profile_Resume(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Profile", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_profile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_projects(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, fc.Args["input"].(models.Languaje))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Project)
-	fc.Result = res
-	return ec.marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_projects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "Name":
-				return ec.fieldContext_Project_Name(ctx, field)
-			case "Description":
-				return ec.fieldContext_Project_Description(ctx, field)
-			case "Repository":
-				return ec.fieldContext_Project_Repository(ctx, field)
-			case "Technologies":
-				return ec.fieldContext_Project_Technologies(ctx, field)
-			case "Website":
-				return ec.fieldContext_Project_Website(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_projects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_jobs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_jobs(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Jobs(rctx, fc.Args["input"].(models.Languaje))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*models.Job)
-	fc.Result = res
-	return ec.marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_jobs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "position":
-				return ec.fieldContext_Job_position(ctx, field)
-			case "company":
-				return ec.fieldContext_Job_company(ctx, field)
-			case "location":
-				return ec.fieldContext_Job_location(ctx, field)
+			case "image":
+				return ec.fieldContext_FullProfile_image(ctx, field)
+			case "name":
+				return ec.fieldContext_FullProfile_name(ctx, field)
 			case "description":
-				return ec.fieldContext_Job_description(ctx, field)
-			case "dates":
-				return ec.fieldContext_Job_dates(ctx, field)
+				return ec.fieldContext_FullProfile_description(ctx, field)
+			case "email":
+				return ec.fieldContext_FullProfile_email(ctx, field)
+			case "technologies":
+				return ec.fieldContext_FullProfile_technologies(ctx, field)
+			case "resume":
+				return ec.fieldContext_FullProfile_resume(ctx, field)
+			case "projects":
+				return ec.fieldContext_FullProfile_projects(ctx, field)
+			case "jobs":
+				return ec.fieldContext_FullProfile_jobs(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Job", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type FullProfile", field.Name)
 		},
 	}
 	defer func() {
@@ -1392,7 +1330,7 @@ func (ec *executionContext) fieldContext_Query_jobs(ctx context.Context, field g
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_jobs_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_fullProfile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3301,34 +3239,6 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputLanguaje(ctx context.Context, obj interface{}) (models.Languaje, error) {
-	var it models.Languaje
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"lang"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "lang":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lang"))
-			it.Lang, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3354,6 +3264,59 @@ func (ec *executionContext) _Dates(ctx context.Context, sel ast.SelectionSet, ob
 		case "to":
 
 			out.Values[i] = ec._Dates_to(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var fullProfileImplementors = []string{"FullProfile"}
+
+func (ec *executionContext) _FullProfile(ctx context.Context, sel ast.SelectionSet, obj *models.FullProfile) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, fullProfileImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("FullProfile")
+		case "image":
+
+			out.Values[i] = ec._FullProfile_image(ctx, field, obj)
+
+		case "name":
+
+			out.Values[i] = ec._FullProfile_name(ctx, field, obj)
+
+		case "description":
+
+			out.Values[i] = ec._FullProfile_description(ctx, field, obj)
+
+		case "email":
+
+			out.Values[i] = ec._FullProfile_email(ctx, field, obj)
+
+		case "technologies":
+
+			out.Values[i] = ec._FullProfile_technologies(ctx, field, obj)
+
+		case "resume":
+
+			out.Values[i] = ec._FullProfile_resume(ctx, field, obj)
+
+		case "projects":
+
+			out.Values[i] = ec._FullProfile_projects(ctx, field, obj)
+
+		case "jobs":
+
+			out.Values[i] = ec._FullProfile_jobs(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -3407,51 +3370,6 @@ func (ec *executionContext) _Job(ctx context.Context, sel ast.SelectionSet, obj 
 	return out
 }
 
-var profileImplementors = []string{"Profile"}
-
-func (ec *executionContext) _Profile(ctx context.Context, sel ast.SelectionSet, obj *models.Profile) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, profileImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Profile")
-		case "Image":
-
-			out.Values[i] = ec._Profile_Image(ctx, field, obj)
-
-		case "Name":
-
-			out.Values[i] = ec._Profile_Name(ctx, field, obj)
-
-		case "Description":
-
-			out.Values[i] = ec._Profile_Description(ctx, field, obj)
-
-		case "Email":
-
-			out.Values[i] = ec._Profile_Email(ctx, field, obj)
-
-		case "Technologies":
-
-			out.Values[i] = ec._Profile_Technologies(ctx, field, obj)
-
-		case "Resume":
-
-			out.Values[i] = ec._Profile_Resume(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var projectImplementors = []string{"Project"}
 
 func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, obj *models.Project) graphql.Marshaler {
@@ -3462,21 +3380,21 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Project")
-		case "Name":
+		case "name":
 
-			out.Values[i] = ec._Project_Name(ctx, field, obj)
+			out.Values[i] = ec._Project_name(ctx, field, obj)
 
-		case "Description":
+		case "description":
 
-			out.Values[i] = ec._Project_Description(ctx, field, obj)
+			out.Values[i] = ec._Project_description(ctx, field, obj)
 
-		case "Repository":
+		case "repository":
 
-			out.Values[i] = ec._Project_Repository(ctx, field, obj)
+			out.Values[i] = ec._Project_repository(ctx, field, obj)
 
-		case "Technologies":
+		case "technologies":
 
-			out.Values[i] = ec._Project_Technologies(ctx, field, obj)
+			out.Values[i] = ec._Project_technologies(ctx, field, obj)
 
 		case "Website":
 
@@ -3512,7 +3430,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "profile":
+		case "fullProfile":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3521,47 +3439,10 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_profile(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "projects":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_projects(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "jobs":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_jobs(ctx, field)
+				res = ec._Query_fullProfile(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -3928,9 +3809,18 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNLanguaje2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐLanguaje(ctx context.Context, v interface{}) (models.Languaje, error) {
-	res, err := ec.unmarshalInputLanguaje(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
+func (ec *executionContext) marshalNFullProfile2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐFullProfile(ctx context.Context, sel ast.SelectionSet, v models.FullProfile) graphql.Marshaler {
+	return ec._FullProfile(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNFullProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐFullProfile(ctx context.Context, sel ast.SelectionSet, v *models.FullProfile) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._FullProfile(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -4231,7 +4121,11 @@ func (ec *executionContext) marshalODates2githubᚗcomᚋEdilbertoᚑVazquezᚋw
 	return ec._Dates(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v []*models.Job) graphql.Marshaler {
+func (ec *executionContext) marshalOJob2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v models.Job) graphql.Marshaler {
+	return ec._Job(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalOJob2ᚕgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v []models.Job) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4258,7 +4152,7 @@ func (ec *executionContext) marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquez
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOJob2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx, sel, v[i])
+			ret[i] = ec.marshalOJob2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4272,21 +4166,11 @@ func (ec *executionContext) marshalOJob2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquez
 	return ret
 }
 
-func (ec *executionContext) marshalOJob2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐJob(ctx context.Context, sel ast.SelectionSet, v *models.Job) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Job(ctx, sel, v)
+func (ec *executionContext) marshalOProject2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v models.Project) graphql.Marshaler {
+	return ec._Project(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalOProfile2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProfile(ctx context.Context, sel ast.SelectionSet, v *models.Profile) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Profile(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v []*models.Project) graphql.Marshaler {
+func (ec *executionContext) marshalOProject2ᚕgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v []models.Project) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -4313,7 +4197,7 @@ func (ec *executionContext) marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVaz
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOProject2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx, sel, v[i])
+			ret[i] = ec.marshalOProject2githubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -4325,13 +4209,6 @@ func (ec *executionContext) marshalOProject2ᚕᚖgithubᚗcomᚋEdilbertoᚑVaz
 	wg.Wait()
 
 	return ret
-}
-
-func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋEdilbertoᚑVazquezᚋwebsiteᚑservicesᚋsrcᚋmodelsᚐProject(ctx context.Context, sel ast.SelectionSet, v *models.Project) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Project(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

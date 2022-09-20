@@ -1,17 +1,8 @@
-type Profile {
-  Image: String
-  Name: String
-  Description: String
-  Email: String
-  Technologies: [String]
-  Resume: String
-}
-
 type Project {
-  Name: String
-  Description: String
-  Repository: String
-  Technologies: [String]
+  name: String
+  description: String
+  repository: String
+  technologies: [String]
   Website: String
 }
 
@@ -28,12 +19,17 @@ type Job {
   dates: Dates
 }
 
-input Languaje {
-  lang: String!
+type FullProfile {
+  image: String
+  name: String
+  description: String
+  email: String
+  technologies: [String]
+  resume: String
+  projects: [Project]
+  jobs: [Job]
 }
 
 type Query {
-  profile(input: Languaje!): Profile
-  projects(input: Languaje!): [Project]
-  jobs(input: Languaje!): [Job]
+  fullProfile(lang: String!): FullProfile!
 }

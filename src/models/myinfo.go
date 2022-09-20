@@ -31,7 +31,12 @@ type Job struct {
 }
 
 type FullProfile struct {
-	Profile
-	Projects []Project
-	Jobs     []Job
+	Image        string   `json:"image" bson:"image"`
+	Name         string   `json:"name" bson:"name"`
+	Description  string   `json:"description" bson:"description"`
+	Email        string   `json:"email" bson:"email"`
+	Technologies []string `json:"technologies" bson:"technologies"`
+	Resume       string   `json:"resume" bson:"resume"`
+	Projects     []Project
+	Jobs         []Job
 }
