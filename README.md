@@ -21,12 +21,14 @@ To run the server locally with docker
 
 ##### REST-API
 
-- Download resume English : [localhost:8000/resume-cv-en-US](http://localhost:8000/resume-cv-en-US)
+- Download resume English : [localhost:8000/resume-cv-en-US](http://localhost:8000/resume-cv-en)
 - Download resume Spanish : [localhost:8000/resume-cv-es](http://localhost:8000/resume-cv-es)
-- Get All data: [localhost:8000/api/v1/my-info/full-profile?lang=en-US](localhost:8000/api/v1/my-info/full-profile?lang=en-US)
-- Get Profile: [localhost:8000/api/v1/my-info/profile?lang=en-US"](localhost:8000/api/v1/my-info/profile?lang=en-US")
-- Get Projects: [localhost:8000/api/v1/my-info/projects?lang=en-US](localhost:8000/api/v1/my-info/projects?lang=en-US)
-- Get Jobs: [localhost:8000/api/v1/my-info/jobs?lang=en-US](localhost:8000/api/v1/my-info/jobs?lang=en-US)
+- Get All data: [localhost:8000/api/v1/my-info/full-profile?lang=en-US](http://localhost:8000/api/v1/my-info/full-profile?lang=en-US)
+- Get Profile: [localhost:8000/api/v1/my-info/profile?lang=en-US"](http://localhost:8000/api/v1/my-info/profile?lang=en-US)
+- Get Projects: [localhost:8000/api/v1/my-info/projects?lang=en-US](http://localhost:8000/api/v1/my-info/projects?lang=en-US)
+- Get Jobs: [localhost:8000/api/v1/my-info/jobs?lang=en-US](http://localhost:8000/api/v1/my-info/jobs?lang=en-US)
+
+If you want a online version change `http://localhost:8000` for `https://website-api-service.azurewebsites.net`
 
 #### Language
 
