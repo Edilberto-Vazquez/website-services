@@ -3,10 +3,14 @@ version: "3.8"
 services:
   website-api:
     container_name: website-api
-    image: website-api
+    image: websiteapi.azurecr.io/website-api:cv-route
     ports:
-      - 5050:5050
+      - 8000:8000
     environment:
+      PORT: :8000
+      DB_NAME: websiteDev
+      DB_URL: mongodb://root:root@mongodb:27017/websiteDev
+      DB_COLLECTION: myinfoDev
       GIN_MODE: release
   mongodb:
     container_name: mongodb
@@ -16,7 +20,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_INITDB_DATABASE: db-dev
+      MONGO_INITDB_DATABASE: websiteDev
     volumes:
       - mongo-data:/data/db
       - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
