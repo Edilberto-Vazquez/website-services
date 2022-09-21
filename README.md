@@ -1,5 +1,10 @@
 # website-services
 
+### Requirements
+
+- have docker installed
+- have docker compose installed
+
 To run the server locally with docker
 
 ### Create the image with
