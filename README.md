@@ -15,6 +15,10 @@ To run the server locally with docker
 - Graphql playground: local [localhost:8000](http://localhost:8000/)
 - Graphql query: [localhost:8000/query](http://localhost:8000/)
 
+##### Queries availables for graphql
+
+- fullProfile
+
 ##### REST-API
 
 - Download resume English : [localhost:8000/resume-cv-en-US](http://localhost:8000/resume-cv-en-US)
@@ -26,13 +30,13 @@ To run the server locally with docker
 
 #### Language
 
-- If you want to change the language change the param lang in the URL for rest
+- If you want to change the language, change the lang parameter in the URL to rest
 
 | First Header | Second Header |
 | ------------ | ------------- |
 | English      | `lang=en-US`  |
 | Spanish      | `lang=es-MX`  |
 
-- For grahpql in variables section add the field
+- For graphql in variables section add the field
 
 ![](https://github.com/Edilberto-Vazquez/website-services/blob/main/graphql-example.png?raw=true)
