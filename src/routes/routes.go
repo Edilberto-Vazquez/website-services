@@ -11,6 +11,10 @@ import (
 
 func GetRoutes(s server.Server, r *gin.Engine) {
 	repo := s.Repo()
+	// cv file
+	r.StaticFile("/resume-cv-en", "./documents/Resume_en.pdf")
+	r.StaticFile("/resume-cv-es", "./documents/Resume_es.pdf")
+
 	// rest api
 	v1 := r.Group("/api/v1")
 	v1.Use(cors.New(constants.CorsConfig))
@@ -21,5 +25,5 @@ func GetRoutes(s server.Server, r *gin.Engine) {
 	r.Use(cors.New(constants.CorsConfig))
 	r.Use(middleware.GinContextToContextMiddleware())
 	r.POST("/query", handlers.GraphqlHandler(repo))
-	r.GET("/playground", handlers.PlaygroundHandler())
+	r.GET("/", handlers.PlaygroundHandler())
 }
