@@ -232,7 +232,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.Technologies(childComplexity), true
 
-	case "Project.Website":
+	case "Project.website":
 		if e.complexity.Project.Website == nil {
 			break
 		}
@@ -308,7 +308,7 @@ var sources = []*ast.Source{
   description: String
   repository: String
   technologies: [String]
-  Website: String
+  website: String
 }
 
 type Dates {
@@ -786,8 +786,8 @@ func (ec *executionContext) fieldContext_FullProfile_projects(ctx context.Contex
 				return ec.fieldContext_Project_repository(ctx, field)
 			case "technologies":
 				return ec.fieldContext_Project_technologies(ctx, field)
-			case "Website":
-				return ec.fieldContext_Project_Website(ctx, field)
+			case "website":
+				return ec.fieldContext_Project_website(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -1223,8 +1223,8 @@ func (ec *executionContext) fieldContext_Project_technologies(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_Website(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_Website(ctx, field)
+func (ec *executionContext) _Project_website(ctx context.Context, field graphql.CollectedField, obj *models.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_website(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1251,7 +1251,7 @@ func (ec *executionContext) _Project_Website(ctx context.Context, field graphql.
 	return ec.marshalOString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_Website(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_website(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -3396,9 +3396,9 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 
 			out.Values[i] = ec._Project_technologies(ctx, field, obj)
 
-		case "Website":
+		case "website":
 
-			out.Values[i] = ec._Project_Website(ctx, field, obj)
+			out.Values[i] = ec._Project_website(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

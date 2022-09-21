@@ -1,5 +1,8 @@
 package graph
 
+// This file will be automatically regenerated based on the schema, any resolver implementations
+// will be copied through when generating and any unknown code will be moved to the end.
+
 import (
 	"context"
 	"fmt"
@@ -11,10 +14,6 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
-// This file will be automatically regenerated based on the schema, any resolver implementations
-// will be copied through when generating and any unknown code will be moved to the end.
-
-// FullProfile is the resolver for the fullProfile field.
 func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
 	ginContext := ctx.Value("GinContextKey")
 	if ginContext == nil {
@@ -30,6 +29,7 @@ func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
 	return gc, nil
 }
 
+// FullProfile is the resolver for the fullProfile field.
 func (r *queryResolver) FullProfile(ctx context.Context, lang string) (*models.FullProfile, error) {
 	gc, err := GinContextFromContext(ctx)
 	if err != nil {
