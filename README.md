@@ -35,4 +35,4 @@ To run the server locally with docker
 
 - For grahpql in variables section add the field
 
-![](https://github.com/Edilberto-Vazquez/website-services/graphql-example.png)
+![](https://github.com/Edilberto-Vazquez/website-services/blob/main/graphql-example.png?raw=true)
