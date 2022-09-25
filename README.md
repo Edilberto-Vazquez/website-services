@@ -37,7 +37,7 @@ If you want a online version change `http://localhost:8000` for `https://website
 
 #### Language
 
-- If you want to change the language, change the lang parameter in the URL to rest
+- If you want to change the language, change the lang parameter in the URL for rest
 
 | First Header | Second Header |
 | ------------ | ------------- |
