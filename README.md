@@ -15,7 +15,7 @@ To run the server locally with docker
 
 `docker compose up -d`
 
-##### Grahpql
+##### Graphql
 
 - Graphql playground: local [localhost:8000](http://localhost:8000/)
 - Graphql query: [localhost:8000/query](http://localhost:8000/)
